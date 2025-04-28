@@ -9,13 +9,19 @@ import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Pokemon } from './entities/poken.entity';
 import { PaginationDto } from 'src/common/dto/paginantion.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PokenService {
+  private defaultLimit: number;
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-  ) {}
+
+    private readonly configService: ConfigService,
+  ) {
+    this.defaultLimit = configService.get<number>('defaultLimit')!;
+  }
   async create(createPokenDto: CreatePokenDto) {
     createPokenDto.name = createPokenDto.name.toLowerCase();
     try {
@@ -26,9 +32,14 @@ export class PokenService {
     }
   }
 
-  findAll(paginationDto : PaginationDto) {
-    const {limit = 10, offset = 0} = paginationDto;
-    return this.pokemonModel.find().limit(limit).skip(offset).sort({no: 1}).select('-__v'); 
+  findAll(paginationDto: PaginationDto) {
+    const { limit = 5, offset = 0 } = paginationDto;
+    return this.pokemonModel
+      .find()
+      .limit(limit)
+      .skip(offset)
+      .sort({ no: 1 })
+      .select('-__v');
   }
 
   // Método para buscar un Pokémon por número, MongoID o nombre

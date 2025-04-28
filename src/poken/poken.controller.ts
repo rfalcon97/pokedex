@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { PokenService } from './poken.service';
 import { CreatePokenDto } from './dto/create-poken.dto';
 import { UpdatePokenDto } from './dto/update-poken.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
+import { PaginationDto } from 'src/common/dto/paginantion.dto';
 
 @Controller('poken')
 export class PokenController {
@@ -14,8 +15,8 @@ export class PokenController {
   }
 
   @Get()
-  findAll() {
-    return this.pokenService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.pokenService.findAll(paginationDto);
   }
 
   @Get(':term')

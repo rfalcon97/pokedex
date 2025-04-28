@@ -8,6 +8,7 @@ import { UpdatePokenDto } from './dto/update-poken.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Pokemon } from './entities/poken.entity';
+import { PaginationDto } from 'src/common/dto/paginantion.dto';
 
 @Injectable()
 export class PokenService {
@@ -25,8 +26,9 @@ export class PokenService {
     }
   }
 
-  findAll() {
-    return `This action returns all poken`;
+  findAll(paginationDto : PaginationDto) {
+    const {limit = 10, offset = 0} = paginationDto;
+    return this.pokemonModel.find().limit(limit).skip(offset).sort({no: 1}).select('-__v'); 
   }
 
   // Método para buscar un Pokémon por número, MongoID o nombre
